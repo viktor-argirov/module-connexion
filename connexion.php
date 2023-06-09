@@ -8,6 +8,11 @@ if(isset($_POST['submit'])) {
         $mail = $_POST['mail'];
         $password = $_POST['password'];
 
+
+        if (isset($_POST['mail']) && isset($_POST['password']) == 'admin') {
+            $_SESSION['admin'] = 'admin';
+            header("Location: admin.php");
+            }
         $requser = $bdd->prepare("SELECT * FROM utilisateurs WHERE mail = ? AND password = ?");
         $requser->execute(array($mail, $password));
         $userexist = $requser->rowCount();

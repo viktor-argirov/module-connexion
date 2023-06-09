@@ -39,8 +39,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         echo "Erreur lors de la mise à jour du profil: "; 
     }
 }
-
-
 ?>
 
 <!DOCTYPE html>
@@ -148,7 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </li>
                 <br />
                     <input type="submit" name="valider" value="Valider &#10004;" />
-                    <a href="index.php">Retour à l'accueil</a>
+                    <a href="deconnexion.php">Deconnexion</a>
                     <br />
             </ul>
         </form>

@@ -1,33 +1,3 @@
-<?php
-// Vérification de l'authentification
-
-session_start(); 
-
-if ($_SESSION['mail'] !== 'admin') {
-    // Redirection si l'utilisateur n'est pas authentifié en tant qu'admin
-    header('Location: connexion.php');
-    exit();
-}
-// Connexion à la base de données
-$host = 'localhost';
-$dbname = 'moduleconnexion';
-$username = 'root';
-$password = '123456789';
-
-try {
-    $db = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    echo 'Erreur de connexion à la base de données : ' . $e->getMessage();
-    exit();
-}
-
-// Récupération des informations des utilisateurs
-$query = "SELECT * FROM utilisateurs";
-$stmt = $db->query($query);
-$utilisateurs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -42,15 +12,6 @@ $utilisateurs = $stmt->fetchAll(PDO::FETCH_ASSOC);
             margin: 0;
             padding: 0;
         }
-
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #f7f7f7;
-            border: 1px solid #ddd;
-        }
-
         h1 {
             text-align: center;
         }
@@ -69,28 +30,79 @@ $utilisateurs = $stmt->fetchAll(PDO::FETCH_ASSOC);
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
+        #myVideo {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        min-width: 100%;
+        min-height: 100%;
+        }
+        .content {
+        position: fixed;
+        top: 0;
+        color: black;
+        width: 100%;
+        }
+        a{
+            text-decoration: none;
+            color: violet;
+        }
+
     </style>
 <body>
-    <div class="container">
-        <h1>Liste des utilisateurs</h1>
-        <?php if (count($users) > 0): ?>
-            <table>
-                <tr>
-                    <th>Nom</th>
-                    <th>Email</th>
-                    <th>Autre information</th>
-                </tr>
-                <?php foreach ($users as $user): ?>
-                    <tr>
-                        <td><?= $user['nom'] ?></td>
-                        <td><?= $user['email'] ?></td>
-                        <td><?= $user['autre_information'] ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </table>
-        <?php else: ?>
-            <p>Aucun utilisateur trouvé.</p>
-        <?php endif; ?>
+    <div class="content">
+        <a href="deconnexion.php">Deconnexion</a>
+    <?php
+        session_start(); 
+
+        $servername = "localhost";
+        $username = "root";
+        $password = "123456789";
+        $dbname = "moduleconnexion";
+
+
+
+        try {
+            $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch(PDOException $e) {
+            echo "Erreur de connexion : " . $e->getMessage();
+        }
+
+
+        if (isset($_SESSION['admin']) && $_SESSION['admin'] == 'admin') {
+            $sql = "SELECT * FROM utilisateurs";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $utilisateurs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            echo "<table border='1'>";
+            echo "<thead>";
+            echo "<tr>";
+            echo "<th>Mail</th>";
+            echo "<th>Password</th>";
+            echo "<th>Prenom</th>";
+            echo "<th>Nom</th>";
+            echo "</tr>";
+            echo "</thead>";
+            echo "<tbody>";
+
+            foreach ($utilisateurs as $key =>$user){
+                echo '<tr>';
+                echo '<td>' . $user['mail'] . '</td>';
+                echo '<td>' . $user['password'] . '</td>';
+                echo '<td>' . $user['prenom'] . '</td>';
+                echo '<td>' . $user['nom'] . '</td>';
+                echo '</tr>';
+            }
+
+            echo '</tbody>';
+            echo '</table>';
+        }
+        else{
+            header("Location: index.php");
+        }
+        ?>
     </div>
 </body>
 </html>
